@@ -1,0 +1,60 @@
+Evector1 = (-1,1,0)
+Evector2 = (1,1,0)
+
+
+class LinearTrans(Scene):
+    def construct(self):
+
+        max_x = 10
+        max_y = max_x/1.777
+        step = 1
+        # Create a grid for a more generic visual
+        gridB = NumberPlane(
+            x_range=[-max_x, max_x, step],
+            y_range=[-max_y, max_y, step],
+            x_length=14.222,
+            y_length=8,
+            background_line_style={
+                "stroke_color": GREY,
+                "stroke_width": 4,
+                "stroke_opacity": 0.6}
+        ).add_coordinates()
+
+        gridF = NumberPlane(
+            x_range=[-max_x, max_x, step],
+            y_range=[-max_y, max_y, step],
+            x_length=14.222,
+            y_length=8,
+            background_line_style={
+                "stroke_color": BLUE,
+                "stroke_width": 4,
+                "stroke_opacity": 0.6}
+        )
+
+
+        SM = np.array([ [float(1*7/max_x),0], [0, float(1*4/max_y)] ]) #Your grid's characteristic matrix, given that the step is 1 (I phyically can't do it)
+
+        basis1_dot = Dot(point = (1,0,0))
+        basis2_dot = Dot(point = (0,1,0))
+        VGroup(basis1_dot, basis2_dot).apply_matrix(SM)
+
+        basis1 = always_redraw(lambda: Vector(basis1_dot.get_end(), color=GREEN))
+        basis2 = always_redraw(lambda: Vector(basis2_dot.get_end(), color=RED))
+
+        Vector1_dot = Dot(point = Evector1)
+        Vector2_dot = Dot(point = Evector2)
+        VGroup(Vector1_dot, Vector2_dot).apply_matrix(SM)  # Snap your vectors to your grid in the correct way, do it withe evry newly added vec
+
+        Vector1 = always_redraw(lambda: Vector(Vector1_dot.get_end(), color=ORANGE))
+        Vector2 = always_redraw(lambda: Vector(Vector2_dot.get_end(), color=PURPLE))
+
+
+
+
+        self.play(Write(VGroup(gridB, gridF), run_time=4))
+        self.play(Write(VGroup(basis1, basis2), run_time=2))
+        self.play(Write(VGroup(Vector1, Vector2), run_time=2))
+        self.wait()
+
+        self.play(ApplyMatrix(matrix,VGroup(basis1_dot, basis2_dot, Vector1_dot, Vector2_dot, gridF)), run_time=4)
+        self.wait()
